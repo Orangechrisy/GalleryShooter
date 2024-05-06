@@ -9,7 +9,7 @@ class PlayerBullet extends Phaser.GameObjects.Sprite {
     update() {
         if (this.active) {
             this.x += this.speed;
-            if (this.x > (game.config.height + this.displayWidth/2)) {
+            if (this.x > (game.config.width + this.displayWidth/2)) {
                 this.makeInactive();
             }
         }

@@ -3,13 +3,13 @@ class Player extends Phaser.GameObjects.Sprite {
 
     // x,y - starting sprite location
     // spriteKey - key for the sprite image asset
-    // upKey - key for moving left
-    // downKey - key for moving right
+    // upKey - key for moving up
+    // downKey - key for moving down
     constructor(scene, x, y, texture, frame, upKey, downKey, playerSpeed) {
         super(scene, x, y, texture, frame);
 
-        this.left = upKey;
-        this.right = downKey;
+        this.up = upKey;
+        this.down = downKey;
         this.playerSpeed = playerSpeed;
 
         scene.add.existing(this);
@@ -29,7 +29,7 @@ class Player extends Phaser.GameObjects.Sprite {
         // Moving down
         if (this.down.isDown) {
             // Check to make sure the sprite can actually move right
-            if (this.y < (game.config.height - (this.displayheight/2))) {
+            if (this.y < (game.config.height - (this.displayHeight/2))) {
                 this.y += this.playerSpeed;
             }
         }

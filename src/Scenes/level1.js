@@ -3,9 +3,9 @@ class level1 extends Phaser.Scene {
         super("theBattle");
         this.my = {sprite: {}};  // Create an object to hold sprite bindings
 
-        this.playerSpeed = 5;
-        this.bulletSpeed = 7;
-        this.magicCooldown = 4;
+        this.playerSpeed = 10;
+        this.bulletSpeed = 12;
+        this.magicCooldown = 5;
         this.magicCooldownCounter = 0;
 
         this.bullets = [];
@@ -29,8 +29,10 @@ class level1 extends Phaser.Scene {
         this.down = this.input.keyboard.addKey("S");
         this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        my.sprite.magicalGirl = new Player(this, game.config.width + 30, game.config.height/2, "magicalGirl", null, this.up, this.down, this.playerSpeed)
-        my.sprite.magicalGirl.addChild(game.make.sprite(10, 0, "wand")); // So wand stays attached
+        my.sprite.magicalGirl = new Player(this, 30, game.config.height/2, "magicalGirl", null, this.up, this.down, this.playerSpeed)
+        my.sprite.magicalGirl.setScale(3);
+        my.sprite.wand = this.add.sprite(my.sprite.magicalGirl.x + 20, my.sprite.magicalGirl.y + 5, "wand");
+        my.sprite.wand.setScale(2);
 
         my.sprite.magicBulletGroup = this.add.group({
             active: true,
@@ -43,11 +45,13 @@ class level1 extends Phaser.Scene {
         my.sprite.magicBulletGroup.createMultiple({
             classType: PlayerBullet,
             active: false,
-            key: my.sprite.bulletGroup.defaultKey,
-            repeat: my.sprite.bulletGroup.maxSize-1
+            key: my.sprite.magicBulletGroup.defaultKey,
+            repeat: my.sprite.magicBulletGroup.maxSize-1
         });
-        my.sprite.bulletGroup.propertyValueSet("speed", this.bulletSpeed);
-    }
+        my.sprite.magicBulletGroup.propertyValueSet("speed", this.bulletSpeed);
+        my.sprite.magicBulletGroup.angle(45);
+        my.sprite.magicBulletGroup.scaleXY(2, 2)
+    };
 
     update() {
         let my = this.my;
@@ -60,9 +64,9 @@ class level1 extends Phaser.Scene {
                 let magic = my.sprite.magicBulletGroup.getFirstDead();
                 // bullet will be null if there are no inactive (available) bullets
                 if (magic != null) {
-                    this.bulletCooldownCounter = this.bulletCooldown;
+                    this.magicCooldownCounter = this.magicCooldown;
                     magic.makeActive();
-                    magic.x = my.sprite.magicalGirl.x + (my.sprite.magicalGirl.displayWidth/2);
+                    magic.x = my.sprite.magicalGirl.x + (my.sprite.magicalGirl.displayWidth/2) + 5;
                     magic.y = my.sprite.magicalGirl.y;
                 }
             }
