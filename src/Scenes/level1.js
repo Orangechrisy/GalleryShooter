@@ -1,14 +1,16 @@
 class level1 extends Phaser.Scene {
     constructor() {
-        super("theBattle");
+        super("level1");
         this.my = {sprite: {}};  // Create an object to hold sprite bindings
 
-        this.playerSpeed = 10;
-        this.bulletSpeed = 12;
-        this.magicCooldown = 5;
+        this.playerSpeed = 15;
+        this.bulletSpeed = 25;
+        this.magicCooldown = 3;
         this.magicCooldownCounter = 0;
 
         this.bullets = [];
+
+        this.timer = 0;
 
     }
 
@@ -20,6 +22,10 @@ class level1 extends Phaser.Scene {
         this.load.image("magicalGirl", "magical_girl.png"); // From Tiny Dungeon
         this.load.image("wand", "wand.png"); // From Tiny Dungeon
         this.load.image("magic", "magic_bullet.png"); // From Micro Roguelike
+
+        // From Pixel Shmup
+        this.load.image("smallPlane1", "plane_small_1.png");
+        this.load.image("mediumPlane1", "plane_med_1.png"); 
     }
 
     create() {
@@ -29,10 +35,12 @@ class level1 extends Phaser.Scene {
         this.down = this.input.keyboard.addKey("S");
         this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
+        let wandSprite = this.add.sprite(50, game.config.height/2 + 5, "wand");
+        wandSprite.setScale(2);
         my.sprite.magicalGirl = new Player(this, 30, game.config.height/2, "magicalGirl", null, this.up, this.down, this.playerSpeed)
         my.sprite.magicalGirl.setScale(3);
-        my.sprite.wand = this.add.sprite(my.sprite.magicalGirl.x + 20, my.sprite.magicalGirl.y + 5, "wand");
-        my.sprite.wand.setScale(2);
+        my.sprite.magicalGirl.bulletHelper = wandSprite;
+        
 
         my.sprite.magicBulletGroup = this.add.group({
             active: true,
@@ -51,11 +59,31 @@ class level1 extends Phaser.Scene {
         my.sprite.magicBulletGroup.propertyValueSet("speed", this.bulletSpeed);
         my.sprite.magicBulletGroup.angle(45);
         my.sprite.magicBulletGroup.scaleXY(2, 2)
+
+        this.small_path_1 = [
+            930, -20,
+            900, 330,
+            700, 125,
+            560, 295,
+            360, 195,
+            -50, 380
+        ]
+        this.small_path_1_curve = new Phaser.Curves.Spline(this.small_path_1);
+        my.sprite.smallPlane1 = this.add.follower(this.small_path_1_curve, 10, 10, "smallPlane1");
+        my.sprite.smallPlane1.visible = false;
+        my.sprite.smallPlane1.angle = -90;
+        my.sprite.smallPlane1.setScale(2);
     };
+
+    planeGotToEnd(plane) {
+        plane.destroy();
+        // set health
+    }
 
     update() {
         let my = this.my;
         this.magicCooldownCounter--;
+        this.timer++;
         
         // Fire Magic Bullet
         if (this.space.isDown) {
@@ -72,6 +100,26 @@ class level1 extends Phaser.Scene {
             }
         }
         
+        if (this.timer == 20) {
+            if (this.small_path_1_curve.points.length > 0) {
+                my.sprite.smallPlane1.x = this.small_path_1_curve.points[0].x;
+                my.sprite.smallPlane1.y = this.small_path_1_curve.points[0].y;
+                my.sprite.smallPlane1.visible = true;
+                let obj =
+                {
+                    from: 0,
+                    to: 1,
+                    delay: 0,
+                    duration: 4000,
+                    ease: 'Quad.easeIn',
+                    repeat: 0,
+                    rotateToPath: false,
+                    onComplete: this.planeGotToEnd(my.sprite.smallPlane1)
+                }
+                my.sprite.smallPlane1.startFollow(obj, 0)
+            }
+        }
+
         my.sprite.magicalGirl.update();
     }
 

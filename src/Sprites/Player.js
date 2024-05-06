@@ -23,6 +23,7 @@ class Player extends Phaser.GameObjects.Sprite {
             // Check to make sure the sprite can actually move left
             if (this.y > (this.displayHeight/2)) {
                 this.y -= this.playerSpeed;
+                this.bulletHelper.y -= this.playerSpeed;
             }
         }
 
@@ -31,6 +32,7 @@ class Player extends Phaser.GameObjects.Sprite {
             // Check to make sure the sprite can actually move right
             if (this.y < (game.config.height - (this.displayHeight/2))) {
                 this.y += this.playerSpeed;
+                this.bulletHelper.y += this.playerSpeed;
             }
         }
     }
