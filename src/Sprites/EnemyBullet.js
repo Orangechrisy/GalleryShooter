@@ -1,8 +1,9 @@
 class EnemyBullet extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, texture, frame) {        
+    constructor(scene, x, y, texture, frame, speed) {        
         super(scene, x, y, texture, frame);
-        this.visible = false;
-        this.active = false;
+        this.visible = true;
+        this.active = true;
+        this.speed = speed;
         return this;
     }
 
