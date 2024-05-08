@@ -22,7 +22,6 @@ class level1 extends Phaser.Scene {
         this.planeBulletSpeed = 15;
     }
 
-    // Use preload to load art and sound assets before the scene starts running.
     preload() {
         // Assets from Kenny Assets
         this.load.setPath("./assets/");
@@ -45,9 +44,14 @@ class level1 extends Phaser.Scene {
 
         this.load.image("singleBullet", "bullet_single.png");
         this.load.image("doubleBullet", "bullet_double.png");
+
+        this.load.image("explosion1", "explosion1.png");
+        this.load.image("explosion2", "explosion2.png");
+        this.load.image("explosion3", "explosion3.png");
     }
 
     create() {
+        document.getElementById('description').innerHTML = 'W: up // S: down // Space: fire'
         let my = this.my;
 
         this.up = this.input.keyboard.addKey("W");
@@ -103,7 +107,7 @@ class level1 extends Phaser.Scene {
         });
         my.sprite.magicBulletGroup.propertyValueSet("speed", this.magicBulletSpeed);
         my.sprite.magicBulletGroup.angle(45);
-        my.sprite.magicBulletGroup.scaleXY(2, 2);
+        my.sprite.magicBulletGroup.scaleXY(3, 3);
 
         // Enemy bullets
         my.sprite.planeBulletGroup = this.add.group({
@@ -123,6 +127,18 @@ class level1 extends Phaser.Scene {
         my.sprite.planeBulletGroup.propertyValueSet("speed", this.planeBulletSpeed);
         my.sprite.planeBulletGroup.angle(-90);
         my.sprite.planeBulletGroup.scaleXY(1, 1);
+
+        // Explosion animation
+        this.anims.create({
+            key: "explosion",
+            frames: [
+                { key: "explosion1" },
+                { key: "explosion2" },
+                { key: "explosion3" },
+            ],
+            frameRate: 3,
+            hideOnComplete: true
+        });
 
 
         // Path setting
@@ -292,9 +308,12 @@ class level1 extends Phaser.Scene {
             }
             for (let magic of my.sprite.magicBulletGroup.getChildren()) {
                 if (magic.active && this.collides(plane, magic)) {
+                    this.explosion = this.add.sprite(plane.x, plane.y, "explosion1").setScale(3).play("explosion");
                     plane.destroy();
                     this.planes.splice(this.planes.indexOf(plane), 1);
                     magic.makeInactive();
+                    this.streak++;
+                    this.score += this.streak;
                 }
             }
         }
@@ -308,6 +327,9 @@ class level1 extends Phaser.Scene {
             }
         }
 
+        // Update Score
+        this.scoreText.setText("Score:" + this.score);
+
         // Set Lives
         for (let i = 0; i < this.livesMax; i++) {
             this.fullHearts[i].visible = false;
@@ -315,9 +337,8 @@ class level1 extends Phaser.Scene {
         for (let i = 0; i < this.lives; i++) {
             this.fullHearts[i].visible = true;
         }
-
-        // Update Score
-        this.scoreText.setText("Score:" + this.score);
+        if (this.lives == 0) {
+            this.scene.start("title");
+        }
     }
-
 }
