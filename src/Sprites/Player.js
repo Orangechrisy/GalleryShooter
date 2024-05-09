@@ -21,7 +21,7 @@ class Player extends Phaser.GameObjects.Sprite {
         // Moving up
         if (this.up.isDown) {
             // Check to make sure the sprite can actually move left
-            if (this.y > (this.displayHeight/2)) {
+            if (this.y > (this.displayHeight/2 + 40)) { // because random ass enemy killing at the top i dont know why
                 this.y -= this.playerSpeed;
                 this.bulletHelper.y -= this.playerSpeed;
             }

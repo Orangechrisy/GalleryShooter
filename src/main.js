@@ -11,7 +11,7 @@ let config = {
     width: 1000,
     height: 600,
     backgroundColor: '0xFF6A00',
-    scene: [title, level1],
+    scene: [title, level1, end],
     fps: { forceSetTimeOut: true, target: 30 }
 }
 
